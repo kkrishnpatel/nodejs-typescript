@@ -45,7 +45,7 @@ export const UpdateUser: Function = async (req: Request, res: Response) => {
   if (!user) {
     return res.status(204).send({});
   }
-  return res.status(202).send(user);
+  return res.status(200).send(user);
 };
 
 export const DeleteUser: Function = async (req: Request, res: Response) => {

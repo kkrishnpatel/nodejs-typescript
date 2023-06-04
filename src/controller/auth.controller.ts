@@ -82,5 +82,5 @@ export const UpdatePassword: Function = async (req: Request, res: Response) => {
     password: await bcyptjs.hash(req.body.password, 10),
   });
 
-  res.status(202).send(user);
+  res.status(200).send(user);
 };

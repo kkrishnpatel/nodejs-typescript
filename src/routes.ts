@@ -23,8 +23,9 @@ const use = fn =>(req:Request, res:Response, next:NextFunction) => {
 }
 
 export const routes = (router: Router) => {
+  // need to check about api routes
   router.post("/api/register",Validate(createUserSchema), use(Register));
-  router.get("/api/login",Validate(loginUserSchema), use(Login));
+  router.post("/api/login",Validate(loginUserSchema), use(Login));
   router.get("/api/user", AuthMiddleware, use(AuthenticatedUser));
   router.put("/api/user/info", Validate(updateSchema), AuthMiddleware, use(UpdateInfo));
   router.patch("/api/user/password",Validate(passwordSchema), AuthMiddleware, use(UpdatePassword));

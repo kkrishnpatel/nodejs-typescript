@@ -6,9 +6,7 @@ import { routes } from "./routes";
 function createServer() {
   const app = express();
   app.use(express.json());
-  app.get("/", (req: Request, res: Response, next: NextFunction) => {
-    res.send("Hello world!");
-  });
+  
   routes(app);
   app.use("*", (req: Request, res: Response) => {
     res.status(404).json({

@@ -5,6 +5,7 @@ require("dotenv").config({
 
 import express, { NextFunction, Request, Response } from "express";
 import { router } from "./routes";
+import { ErrorHandler } from "./utils/errorHandeler";
 
 
 function createServer() {
@@ -14,13 +15,11 @@ function createServer() {
 
   // if not api routes found then send a 404 response
   app.use("*", (req: Request, res: Response) => {
-    res.status(404).json({
-      message: "You reached a route that is not defined on this server",
-    });
+    ErrorHandler(404, 'You reached a route that is not defined on this server')
   });
 
   process.on("unhandledRejection", (error: Error) => {
-    throw new Error(error.message);
+    ErrorHandler(500, error.message)
   });
 
   // global error handler

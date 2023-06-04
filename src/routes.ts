@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response, Router } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import {
   AuthenticatedUser,
   Login,
@@ -18,21 +18,24 @@ import { PermissionMiddleware } from "./middleware/permission.middleware";
 import { createSchema, createUserSchema, loginUserSchema, passwordSchema, updateSchema } from "./schemas/user.schema";
 import { Validate } from "./middleware/validate";
 
+// To avoid try and catch block use below middleware
 const use = fn =>(req:Request, res:Response, next:NextFunction) => {
   Promise.resolve(fn(req, res, next)).catch(next);
 }
 
-export const routes = (router: Router) => {
-  // need to check about api routes
-  router.post("/api/register",Validate(createUserSchema), use(Register));
-  router.post("/api/login",Validate(loginUserSchema), use(Login));
-  router.get("/api/user", AuthMiddleware, use(AuthenticatedUser));
-  router.put("/api/user/info", Validate(updateSchema), AuthMiddleware, use(UpdateInfo));
-  router.patch("/api/user/password",Validate(passwordSchema), AuthMiddleware, use(UpdatePassword));
+export const router = express.Router();
 
-  router.get("/api/users", AuthMiddleware, PermissionMiddleware, use(Users));
-  router.post("/api/users", AuthMiddleware, Validate(createSchema), PermissionMiddleware, use(CreateUser));
-  router.get("/api/users/:id", AuthMiddleware, PermissionMiddleware, use(GetUser));
-  router.put("/api/users/:id", AuthMiddleware, PermissionMiddleware, use(UpdateUser));
-  router.delete("/api/users/:id", AuthMiddleware, PermissionMiddleware, use(DeleteUser));
-};
+//User Route  
+router.post("/login",Validate(loginUserSchema), use(Login));
+router.post("/register",Validate(createUserSchema), use(Register));
+router.post("/login",Validate(loginUserSchema), use(Login));
+router.get("/user", AuthMiddleware, use(AuthenticatedUser));
+router.put("/user/info", Validate(updateSchema), AuthMiddleware, use(UpdateInfo));
+router.patch("/user/password",Validate(passwordSchema), AuthMiddleware, use(UpdatePassword));
+//Admin Route
+router.get("/users", AuthMiddleware, PermissionMiddleware, use(Users));
+router.post("/users", AuthMiddleware, Validate(createSchema), PermissionMiddleware, use(CreateUser));
+router.get("/users/:id", AuthMiddleware, PermissionMiddleware, use(GetUser));
+router.put("/users/:id", AuthMiddleware, Validate(createSchema), PermissionMiddleware, use(UpdateUser));
+router.delete("/users/:id", AuthMiddleware, PermissionMiddleware, use(DeleteUser));
+

@@ -91,10 +91,9 @@ describe("User tests", () => {
   it("Try to get user with wrong token", (done) => {
     request(app)
       .get("/api/user")
-      .set({ access_token: "123" })
+      .set({ access_token: UserToken+'1' })
       .end((err, res) => {
         expect(res.status).to.be.equal(401);
-        let user = res.body;
         done();
       });
   });

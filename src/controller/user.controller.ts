@@ -28,7 +28,7 @@ export const GetUser: Function = async (req: Request, res: Response) => {
   const repository = getManager().getRepository(User);
   const user = <User>await repository.findOne(req.params.id);
   if (!user) {
-    return res.status(204).send({});
+    return res.status(204).send({message: "User not found."});
   }
   return res.send(user);
 };
@@ -43,7 +43,7 @@ export const UpdateUser: Function = async (req: Request, res: Response) => {
   });
   const user = <User>await repository.findOne(req.params.id);
   if (!user) {
-    return res.status(204).send({});
+    return res.status(204).send({ errors: { message: "User not found" } });
   }
   return res.status(200).send(user);
 };

@@ -3,15 +3,14 @@ import { getManager } from "typeorm";
 import { User } from "../entity/user.entity";
 import bcyptjs from "bcryptjs";
 import { sign } from "jsonwebtoken";
+import { ErrorHandler } from "../utils/errorHandeler";
 
 export const Register: Function = async (req: Request, res: Response) => {
   const { name, email, password, role } = <User>req.body;
   const repository = getManager().getRepository(User);
   const isUserExist = <User>await repository.findOne({ email });
   if (isUserExist) {
-    return res
-      .status(409)
-      .send({ errors: { message: "User Already Exist. Please Login" } });
+    ErrorHandler(409, 'User Already Exist. Please Login')
   }
   const { password: removedPassword, ...user } = <User>await repository.save({
     name,
@@ -34,17 +33,13 @@ export const Login: Function = async (req: Request, res: Response) => {
     }
   );
   if (!user) {
-    return res.status(400).send({
-      message: "invalid credentials!",
-    });
+    ErrorHandler(400, 'invalid credentials!')
   }
   const isPasswordMatch = <Boolean>(
     await bcyptjs.compare(req.body.password, user.password)
   );
   if (!isPasswordMatch) {
-    return res.status(400).send({
-      message: "invalid credentials!",
-    });
+    ErrorHandler(400, 'invalid credentials!')
   }
   const { name, role, id } = <User>user;
   const token = <String>sign({ id, name, email }, process.env.TOKEN_KEY, {
@@ -81,6 +76,5 @@ export const UpdatePassword: Function = async (req: Request, res: Response) => {
   await repository.update(user.id, {
     password: await bcyptjs.hash(req.body.password, 10),
   });
-
   res.status(200).send(user);
 };

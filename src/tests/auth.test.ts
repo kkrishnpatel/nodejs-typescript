@@ -19,6 +19,15 @@ describe("User tests", () => {
     connection = await createConnection();
   });
 
+  it("404 route test", (done) => {
+    request(app)
+      .post("/api/test")
+      .end((err, res: any) => {
+        expect(res.status).to.be.equal(404);
+        done();
+      });
+  });
+
   it("Register user fail test without all params", (done) => {
     request(app)
       .post("/api/register")
@@ -46,6 +55,7 @@ describe("User tests", () => {
         done();
       });
   });
+
   it("Register user with same email", (done) => {
     request(app)
       .post("/api/register")
@@ -60,6 +70,7 @@ describe("User tests", () => {
         done();
       });
   });
+
   it("Try to login with wrong credential ", (done) => {
     request(app)
       .post("/api/login")
@@ -97,6 +108,7 @@ describe("User tests", () => {
         done();
       });
   });
+
   it("Get user", (done) => {
     request(app)
       .get("/api/user")
@@ -109,6 +121,7 @@ describe("User tests", () => {
         done();
       });
   });
+
   it("Update password", (done) => {
     request(app)
       .patch("/api/user/password")
@@ -125,6 +138,7 @@ describe("User tests", () => {
         done();
       });
   });
+
   it("Update profile", (done) => {
     request(app)
       .put("/api/user/info")
@@ -139,11 +153,13 @@ describe("User tests", () => {
         done();
       });
   });
+
 });
 
 describe("Admin tests", () => {
   email = fakeEmail();
   let userId = 0;
+
   it("Register admin user", (done) => {
     request(app)
       .post("/api/register")
@@ -159,6 +175,7 @@ describe("Admin tests", () => {
         done();
       });
   });
+
   it("Login admin", (done) => {
     request(app)
       .post("/api/login")
@@ -173,6 +190,7 @@ describe("Admin tests", () => {
         done();
       });
   });
+
   it("Try to get all user with USER level access fail", (done) => {
     request(app)
       .get("/api/users")
@@ -182,6 +200,7 @@ describe("Admin tests", () => {
         done();
       });
   });
+
   it("Try to all User with ADMIN level access", (done) => {
     request(app)
       .get("/api/users")
@@ -191,6 +210,7 @@ describe("Admin tests", () => {
         done();
       });
   });
+
   it("Create user", (done) => {
     request(app)
       .post("/api/users")
@@ -207,6 +227,7 @@ describe("Admin tests", () => {
         done();
       });
   });
+
   it("Get user by id", (done) => {
     request(app)
       .get(`/api/users/${userId}`)
@@ -218,6 +239,7 @@ describe("Admin tests", () => {
         done();
       });
   });
+
   it("Update user by id", (done) => {
     request(app)
       .put(`/api/users/${userId}`)
@@ -234,6 +256,7 @@ describe("Admin tests", () => {
         done();
       });
   });
+
   it("Delete user by id using USER role fail", (done) => {
     request(app)
       .delete(`/api/users/${userId}`)
@@ -243,15 +266,27 @@ describe("Admin tests", () => {
         done();
       });
   });
+
+  it("Try to delete non exist user", (done) => {
+    request(app)
+      .delete(`/api/users/${999}}`)
+      .set({ access_token: adminToken })
+      .end((err, res) => {
+        expect(res.status).to.be.equal(204);
+        done();
+      });
+  });
+
   it("Delete user by id using Admin role", (done) => {
     request(app)
       .delete(`/api/users/${userId}`)
       .set({ access_token: adminToken })
       .end((err, res) => {
-        expect(res.status).to.be.equal(201);
+        expect(res.status).to.be.equal(200);
         done();
       });
   });
+  
   after(async () => {
     const entities = connection.entityMetadatas;
     for (const entity of entities) {

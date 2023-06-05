@@ -1,5 +1,7 @@
 #  start with Nodejs
-Make sure you you have config MySQL DB variable in env.development and env.test <br>
+
+> :warning: **Make sure you you have config MySQL DB variable in env.development and env.test** 
+<br>
 run the following command to start application, 
 
 ### `npm start`
